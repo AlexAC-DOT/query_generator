@@ -13,6 +13,8 @@ def main():
     db_type = "sqlite"
     for column in column_list:
         is_table_query = qg.get_is_table_query(column, db_type)
+        print(is_table_query)
+        
         
 
 if __name__ == "__main__":

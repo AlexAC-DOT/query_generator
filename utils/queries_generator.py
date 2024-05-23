@@ -34,12 +34,20 @@ def get_schema_query(table_name, db_type) -> str:
         raise ValueError(f"Unsupported database type: {db_type}")
     return query
 
-def get_row_hash_query(table_name, db_type, hash_algorithm='sha256'):
+def generate_row_hash_query(table_name, columns, db_type, hash_algorithm='sha256'):
     validate_db_type()
-    if db_type == 'sqlite':
-        query = f"SELECT *, HASH('{hash_algorithm}', * || '') AS row_hash FROM {table_name};"
-    elif db_type == 'postgres':
-        query = f"SELECT *, ENCODE(DIGEST(CONCAT_WS('', *, ''), '{hash_algorithm}'), 'hex') AS row_hash FROM {table_name};"
+    if columns:
+        if db_type == 'sqlite':
+            query = f"SELECT *, HASH('{hash_algorithm}', {', '.join(columns)} || '') AS row_hash FROM {table_name};"
+        elif db_type == 'postgres':
+            query = f"SELECT *, ENCODE(DIGEST(CONCAT_WS('', {', '.join(columns)}), '{hash_algorithm}'), 'hex') AS row_hash FROM {table_name};"
+        else:
+            raise ValueError(f"Unsupported database type: {db_type}")
     else:
-        raise ValueError(f"Unsupported database type: {db_type}")
+        if db_type == 'sqlite':
+            query = f"SELECT *, HASH('{hash_algorithm}', * || '') AS row_hash FROM {table_name};"
+        elif db_type == 'postgres':
+            query = f"SELECT *, ENCODE(DIGEST(CONCAT_WS('', *, ''), '{hash_algorithm}'), 'hex') AS row_hash FROM {table_name};"
+        else:
+            raise ValueError(f"Unsupported database type: {db_type}")
     return query
