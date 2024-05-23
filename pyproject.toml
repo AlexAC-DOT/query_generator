@@ -6,7 +6,8 @@ authors = ["Alex Alonso <alejandro.alonso@thedotcollective.co.uk>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
+pandas = "^2.2.2"
 
 
 [build-system]
