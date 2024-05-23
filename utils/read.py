@@ -1,7 +1,6 @@
 import pandas as pd
 
-def read_first_column_as_list(file_path):
-    # Read the Excel file
+def get_column_names_from_excel(file_path: str) -> list:
     df = pd.read_excel(file_path)
     
     # Extract the first column
@@ -9,8 +8,8 @@ def read_first_column_as_list(file_path):
     
     return first_column
 
-# Example usage
-if __name__ == "__main__":
-    file_path = 'path_to_your_excel_file.xlsx'
-    first_column_list = read_first_column_as_list(file_path)
-    print(first_column_list)
+def get_columns_from_db() -> list:
+    """
+    TODO: Implement function to read the tables names from the SQL database using regex
+    """
+    raise NotImplementedError

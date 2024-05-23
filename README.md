@@ -39,10 +39,15 @@ poetry run python main.py
 ```
 
 The tool will:
-1. Compare the table structures of the source and target databases.
-2. Compare the data within each table.
-3. Generate SQL queries to reconcile any differences.
-4. Output a report summarizing the differences and the generated SQL queries.
+1. Read a list of the tables to be consiliated.
+2. For each table it will generate a query to check if the table exists (The query generator function will have an optional boolean parameter (date_to_compare) to generate a query with only this data.)
+ - If the table does not exist it will check the next table.
+ - If the table exists in the target db it will generate queries to:
+      - Get count of rows on the table.
+      - Get schema for table.
+      - Get hash for each row.
+ 3. Use this queries on the source and target dbs and do a comparisson.
+ 4. Fill in the report for each table.
 
 ## Contributing
 
