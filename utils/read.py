@@ -1,6 +1,6 @@
 import pandas as pd
 
-def get_column_names_from_excel(file_path: str) -> list:
+def get_table_names_from_excel(file_path: str) -> list:
     df = pd.read_excel(file_path)
     
     # Extract the first column

@@ -1,3 +1,6 @@
+from typing import List, Optional, Union
+from datetime import datetime
+
 def validate_db_type(db_type: str) -> bool:
     if db_type not in ['sqlite', 'postgres', 'mysql']:
         raise ValueError(f"Unsupported database type: {db_type}")
@@ -15,10 +18,22 @@ def get_is_table_query(table_name: str, db_type: str) -> str:
 def get_count_query(table_name: str, db_type: str, daily: bool = False) -> str:
     validate_db_type(db_type)
     
-    query = f"SELECT COUNT(*) FROM {table_name};"
+    # Define date filtering clause
+    if daily:
+        today = datetime.now().strftime('%Y-%m-%d')
+        if db_type == 'sqlite':
+            date_filter_clause = f"WHERE date(timestamp_column) = '{today}'"
+        elif db_type == 'postgres':
+            date_filter_clause = f"WHERE DATE(timestamp_column) = '{today}'"
+        else:
+            raise ValueError(f"Unsupported database type: {db_type}")
+    else:
+        date_filter_clause = ''
+    
+    query = f"SELECT COUNT(*) FROM {table_name} {date_filter_clause};"
     return query
 
-def get_schema_query(table_name, db_type) -> str:
+def get_schema_query(table_name:str, db_type: str) -> str:
     validate_db_type()
     if db_type == 'sqlite':
         query = f"PRAGMA table_info({table_name});"
@@ -34,20 +49,49 @@ def get_schema_query(table_name, db_type) -> str:
         raise ValueError(f"Unsupported database type: {db_type}")
     return query
 
-def generate_row_hash_query(table_name, columns, db_type, hash_algorithm='sha256'):
-    validate_db_type()
+def generate_row_hash_query(
+    table_name: str,
+    columns: Optional[Union[List[str], str]] = None,
+    db_type: str = 'sqlite',
+    daily: bool = False,
+    hash_algorithm: str = 'sha256'
+) -> str:
+    validate_db_type(db_type)
+    
+    # Prepare column list for inclusion in the query
     if columns:
+        if isinstance(columns, str):
+            columns = [columns]
+        columns_clause = ', '.join(columns)
+    else:
+        columns_clause = '*'
+    
+    # Define date filtering clause
+    if daily:
+        today = datetime.now().strftime('%Y-%m-%d')
         if db_type == 'sqlite':
-            query = f"SELECT *, HASH('{hash_algorithm}', {', '.join(columns)} || '') AS row_hash FROM {table_name};"
+            date_filter_clause = f"WHERE date(timestamp_column) = '{today}'"
         elif db_type == 'postgres':
-            query = f"SELECT *, ENCODE(DIGEST(CONCAT_WS('', {', '.join(columns)}), '{hash_algorithm}'), 'hex') AS row_hash FROM {table_name};"
+            date_filter_clause = f"WHERE DATE(timestamp_column) = '{today}'"
         else:
             raise ValueError(f"Unsupported database type: {db_type}")
     else:
-        if db_type == 'sqlite':
-            query = f"SELECT *, HASH('{hash_algorithm}', * || '') AS row_hash FROM {table_name};"
-        elif db_type == 'postgres':
-            query = f"SELECT *, ENCODE(DIGEST(CONCAT_WS('', *, ''), '{hash_algorithm}'), 'hex') AS row_hash FROM {table_name};"
+        date_filter_clause = ''
+
+    # Generate the query based on database type
+    if db_type == 'sqlite':
+        if columns:
+            columns_expression = ' || '.join(columns)
+            query = f"SELECT *, {hash_algorithm}({columns_expression}) AS row_hash FROM {table_name} {date_filter_clause};"
         else:
-            raise ValueError(f"Unsupported database type: {db_type}")
+            query = f"SELECT *, {hash_algorithm}(*) AS row_hash FROM {table_name} {date_filter_clause};"
+    elif db_type == 'postgres':
+        if columns:
+            columns_expression = " || '' || ".join(columns)
+            query = f"SELECT *, ENCODE(DIGEST({columns_expression}, '{hash_algorithm}'), 'hex') AS row_hash FROM {table_name} {date_filter_clause};"
+        else:
+            query = f"SELECT *, ENCODE(DIGEST(*, '{hash_algorithm}'), 'hex') AS row_hash FROM {table_name} {date_filter_clause};"
+    else:
+        raise ValueError(f"Unsupported database type: {db_type}")
+    
     return query
