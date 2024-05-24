@@ -47,7 +47,6 @@ The tool will:
       - Get schema for table.
       - Get hash for each row.
  3. Use this queries on the source and target dbs and do a comparisson.
- 4. Fill in the report for each table.
 
 ## Contributing
 
