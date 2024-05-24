@@ -40,13 +40,13 @@ poetry run python main.py
 
 The tool will:
 1. Read a list of the tables to be consiliated.
-2. For each table it will generate a query to check if the table exists (The query generator function will have an optional boolean parameter (date_to_compare) to generate a query with only this data.)
- - If the table does not exist it will check the next table.
- - If the table exists in the target db it will generate queries to:
-      - Get count of rows on the table.
-      - Get schema for table.
-      - Get hash for each row.
- 3. Use this queries on the source and target dbs and do a comparisson.
+2. For each table it will generate a queries to run a do table comparisons. Some query_generator functions will have an optional boolean parameter (daily) to generate a query with only most recent data.
+3. The Queries generated will answer this questions:
+   - If the table exists.
+   - How many rows are on a table
+   - What is the schema of the table
+   - What is the result of hashing every row.
+ 3. Use this queries to do comparissons between the 2 tables.
 
 ## Contributing
 
