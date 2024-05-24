@@ -4,6 +4,7 @@ from datetime import datetime
 def validate_db_type(db_type: str) -> bool:
     if db_type not in ['sqlite', 'postgres', 'mysql']:
         raise ValueError(f"Unsupported database type: {db_type}")
+    return True
 
 def get_is_table_query(table_name: str, db_type: str) -> str:
     validate_db_type(db_type)
