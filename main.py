@@ -32,10 +32,5 @@ def main():
         for query in query_list:
             file.write(query + '\n')
 
-
-
-        
-        
-
 if __name__ == "__main__":
     main()

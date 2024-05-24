@@ -39,8 +39,8 @@ poetry run python main.py
 ```
 
 The tool will:
-1. Read a list of the tables to be consiliated.
-2. For each table it will generate a queries to run a do table comparisons. Some query_generator functions will have an optional boolean parameter (daily) to generate a query with only most recent data.
+1. Reads a excel file that has the name of the tables that need to be consolidated.
+2. For each table it will generate a number 4 queries for the comparison. Some query_generator functions will have an optional boolean parameter (daily) to generate a query with only most recent data. The queries will be written in a txt file called queries.txt
 3. The Queries generated will answer this questions:
    - If the table exists.
    - How many rows are on a table
