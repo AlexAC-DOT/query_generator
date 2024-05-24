@@ -51,18 +51,3 @@ The tool will:
 ## Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request for review.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For any questions or issues, please open an issue on GitHub or contact the project maintainer:
-
-- **GitHub**: [yourusername](https://github.com/yourusername)
-- **Email**: your.email@example.com
-
----
-
-Thank you for using the Database Reconciliation Tool! We hope it helps streamline your database management processes.
