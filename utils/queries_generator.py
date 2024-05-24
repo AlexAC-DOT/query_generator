@@ -34,7 +34,7 @@ def get_count_query(table_name: str, db_type: str, daily: bool = False) -> str:
     return query
 
 def get_schema_query(table_name:str, db_type: str) -> str:
-    validate_db_type()
+    validate_db_type(db_type)
     if db_type == 'sqlite':
         query = f"PRAGMA table_info({table_name});"
     elif db_type == 'postgres':
